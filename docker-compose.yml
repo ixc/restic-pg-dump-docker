@@ -1,0 +1,19 @@
+version: '3'
+
+services:
+  restic-pg-dump:
+    environment:
+      AWS_ACCESS_KEY_ID:
+      AWS_SECRET_ACCESS_KEY:
+      # CRONTAB_SCHEDULE: '0 */4 * * *'
+      PGHOST:
+      PGPASSWORD:
+      # PGPORT: 5432
+      PGUSER:
+      # RESTIC_KEEP_DAILY: 7
+      # RESTIC_KEEP_LAST: 5
+      # RESTIC_KEEP_WEEKLY: 4
+      RESTIC_PASSWORD:
+      RESTIC_REPOSITORY:
+    image: interaction/restic-pg-dump
+    restart: always

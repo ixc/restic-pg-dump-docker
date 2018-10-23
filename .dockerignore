@@ -1,0 +1,4 @@
+.envrc
+docker-compose.override.yml
+mnt/
+restore/

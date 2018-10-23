@@ -1,0 +1,37 @@
+#!/bin/bash
+
+set -e
+
+export PGHOST="${PGHOST:-postgres}"
+export PGPORT="${PGPORT:-5432}"
+export PGUSER="${PGUSER:-postgres}"
+
+# Wait for PostgreSQL to become available.
+COUNT=0
+until psql -l > /dev/null 2>&1; do
+	if [[ "$COUNT" == 0 ]]; then
+		echo "Waiting for PostgreSQL ($PGUSER@$PGHOST:$PGPORT)..."
+	fi
+	(( COUNT += 1 ))
+	sleep 1
+done
+if (( COUNT > 0 )); then
+	echo "Waited $COUNT seconds for PostgreSQL."
+fi
+
+mkdir -p "/pg_dump/$PGHOST"
+
+# Dump individual databases directly to restic repository.
+DBLIST=$(psql -d postgres -q -t -c "SELECT datname FROM pg_database WHERE datname NOT IN ('postgres', 'rdsadmin', 'template0', 'template1')")
+for dbname in $DBLIST; do
+	echo "Dumping database '$dbname'"
+	time pg_dump --file="/pg_dump/$PGHOST/$dbname.sql" --no-owner --no-privileges --dbname="$dbname"
+done
+
+# echo "Dumping global objects for '$PGHOST'"
+# time pg_dumpall --file="/pg_dump/$PGHOST/!globals.sql" --globals-only
+
+echo "Sending database dumps to S3"
+time restic backup "/pg_dump/$PGHOST"
+
+rm -rf "/pg_dump/$PGHOST"
