@@ -47,9 +47,10 @@ Restrict access to `.envrc`, because it contains AWS and restic credentials:
 
     $ chmod 600 .envrc
 
-Install [direnv] via [Homebrew] and run `direnv allow` to ensure your `.envrc` file is always sourced when you change to this directory:
+Install [direnv] via [Homebrew] and configure to ensure your `.envrc` file is always sourced when you change to this directory:
 
     $ brew install direnv
+    $ eval "$(direnv hook bash)"  # Change bash to zsh/fish/tcsh, if necessary, and add to your shell's RC file
     $ direnv allow
 
 Install [restic] via [Homebrew]:
