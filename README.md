@@ -63,11 +63,11 @@ List snapshots:
 
 Restore the latest snapshot for a given server:
 
-    $ restic restore latest --host "$PGHOST" --target "./restore/$PGHOST"
+    $ restic restore --host "$PGHOST" --target "restore/$PGHOST" latest
 
 Restore files matching a pattern from latest snapshot for a given server:
 
-    $ restic restore latest --host "$PGHOST" --target "./restore/$PGHOST" --include '*-production.sql'
+    $ restic restore --host "$PGHOST" --target "restore/$PGHOST" --include '*-production.sql' latest
 
 Mount the restic repository via fuse (read-only):
 
