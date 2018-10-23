@@ -1,4 +1,8 @@
 export AWS_ACCESS_KEY_ID='...'
 export AWS_SECRET_ACCESS_KEY='...'
+export PGHOST='...'
+export PGPASSWORD='...'
+# export PGPORT='5432'
+export PGUSER='...'
 export RESTIC_PASSWORD='...'
 export RESTIC_REPOSITORY='s3:s3.amazonaws.com/...'
