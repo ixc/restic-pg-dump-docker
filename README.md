@@ -79,4 +79,5 @@ Then, access the latest snapshot from another terminal:
 
 
 [direnv]: https://direnv.net/
+[Homebrew]: https://brew.sh/
 [restic]: https://restic.net/
