@@ -62,20 +62,20 @@ Mount the restic repository via fuse (read-only):
 
 Then, access the latest snapshot from another terminal:
 
-    $ ls -l ./mnt/snapshots/latest
-    $ psql -f "./mnt/snapshots/latest/pg_dump/{PGHOST}/{DBNAME}.sql" {DBNAME}
+    $ ls -l "./mnt/hosts/$PGHOST/latest"
+    $ psql -f "./mnt/hosts/$PGHOST/latest/pg_dump/{DBNAME}.sql" {DBNAME}
 
 List snapshots:
 
     $ restic snapshots
 
-Restore the latest snapshot for a given path:
+Restore the latest snapshot for a given server:
 
-    $ restic restore latest --path "/pg_dump/{PGHOST}" --target ./restore
+    $ restic restore latest --host "$PGHOST" --target "./restore/$PGHOST"
 
 Restore files matching a pattern from latest snapshot for a given path:
 
-    $ restic restore latest --path "/pg_dump/{PGHOST}" --target ./restore --include '*-production.sql'
+    $ restic restore latest --host "$PGHOST" --target "./restore/$PGHOST" --include '*-production.sql'
 
 
 [direnv]: https://direnv.net/
