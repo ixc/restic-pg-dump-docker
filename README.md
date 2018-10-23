@@ -71,12 +71,12 @@ Restore files matching a pattern from latest snapshot for a given server:
 
 Mount the restic repository via fuse (read-only):
 
-    $ restic mount ./mnt
+    $ restic mount mnt
 
 Then, access the latest snapshot from another terminal:
 
-    $ ls -l "./mnt/hosts/$PGHOST/latest"
-    $ psql -f "./mnt/hosts/$PGHOST/latest/pg_dump/{DBNAME}.sql" {DBNAME}
+    $ ls -l "mnt/hosts/$PGHOST/latest"
+    $ psql -f "mnt/hosts/$PGHOST/latest/pg_dump/{DBNAME}.sql" {DBNAME}
 
 
 [direnv]: https://direnv.net/
