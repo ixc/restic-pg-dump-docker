@@ -64,7 +64,7 @@ Restore the latest snapshot for a given server:
 
     $ restic restore latest --host "$PGHOST" --target "./restore/$PGHOST"
 
-Restore files matching a pattern from latest snapshot for a given path:
+Restore files matching a pattern from latest snapshot for a given server:
 
     $ restic restore latest --host "$PGHOST" --target "./restore/$PGHOST" --include '*-production.sql'
 
