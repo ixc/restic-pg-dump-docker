@@ -56,15 +56,6 @@ Install [restic] via [Homebrew]:
 
     $ brew install restic
 
-Mount the restic repository via fuse (read-only):
-
-    $ restic mount ./mnt
-
-Then, access the latest snapshot from another terminal:
-
-    $ ls -l "./mnt/hosts/$PGHOST/latest"
-    $ psql -f "./mnt/hosts/$PGHOST/latest/pg_dump/{DBNAME}.sql" {DBNAME}
-
 List snapshots:
 
     $ restic snapshots
@@ -76,6 +67,15 @@ Restore the latest snapshot for a given server:
 Restore files matching a pattern from latest snapshot for a given path:
 
     $ restic restore latest --host "$PGHOST" --target "./restore/$PGHOST" --include '*-production.sql'
+
+Mount the restic repository via fuse (read-only):
+
+    $ restic mount ./mnt
+
+Then, access the latest snapshot from another terminal:
+
+    $ ls -l "./mnt/hosts/$PGHOST/latest"
+    $ psql -f "./mnt/hosts/$PGHOST/latest/pg_dump/{DBNAME}.sql" {DBNAME}
 
 
 [direnv]: https://direnv.net/
