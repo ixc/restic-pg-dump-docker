@@ -25,7 +25,7 @@ mkdir -p "/pg_dump"
 DBLIST=$(psql -d postgres -q -t -c "SELECT datname FROM pg_database WHERE datname NOT IN ('postgres', 'rdsadmin', 'template0', 'template1')")
 for dbname in $DBLIST; do
 	echo "Dumping database '$dbname'"
-	time pg_dump --file="/pg_dump/$dbname.sql" --no-owner --no-privileges --dbname="$dbname"
+	time pg_dump --file="/pg_dump/$dbname.sql" --no-owner --no-privileges --dbname="$dbname" || true  # Ignore failures
 done
 
 # echo "Dumping global objects for '$PGHOST'"
