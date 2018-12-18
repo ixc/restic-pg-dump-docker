@@ -6,7 +6,7 @@ By default:
 
 - Uses S3 as restic repository backend.
 - Runs every 4 hours via cron job.
-- Keeps 5 latest, 7 daily, and 4 weekly snapshots.
+- Keeps 5 latest, 7 daily, 4 weekly, and 12 monthly snapshots.
 
 
 # Usage
@@ -28,11 +28,12 @@ Run:
 
 You can also pass the following environment variables to override the defaults:
 
-    -e CRONTAB_SCHEDULE='0 */4 * * *' \
-    -e PGPORT='5432' \
-    -e RESTIC_KEEP_DAILY='7' \
-    -e RESTIC_KEEP_LAST='5' \
-    -e RESTIC_KEEP_WEEKLY='4' \
+    -e CRONTAB_SCHEDULE='0 */4 * * *'
+    -e PGPORT='5432'
+    -e RESTIC_KEEP_DAILY='7'
+    -e RESTIC_KEEP_LAST='5'
+    -e RESTIC_KEEP_WEEKLY='4'
+    -e RESTIC_KEEP_MONTHLY='12'
 
 A `docker-compose.yml` file is provided for convenience.
 
