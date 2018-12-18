@@ -13,6 +13,7 @@ services:
       # RESTIC_KEEP_DAILY: 7
       # RESTIC_KEEP_LAST: 5
       # RESTIC_KEEP_WEEKLY: 4
+      # RESTIC_KEEP_MONTHLY: 12
       RESTIC_PASSWORD:
       RESTIC_REPOSITORY:
     image: interaction/restic-pg-dump
