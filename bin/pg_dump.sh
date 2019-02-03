@@ -8,6 +8,13 @@ for i in {0..10}; do
 	export PGPORT="${PGPORT_$i:-5432}"
 	export PGUSER="$PGUSER_$i"
 
+	# No more databases.
+	for var in PGHOST_$i PGPOST_$i PGUSER_$i; do
+		eval [[ -z \${$var+1} ]] && {
+			exit 0
+		}
+	done
+
 	# Wait for PostgreSQL to become available.
 	COUNT=0
 	until psql -l > /dev/null 2>&1; do
