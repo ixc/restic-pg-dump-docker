@@ -3,6 +3,7 @@
 set -e
 
 for i in {0..10}; do
+	export HOSTNAME="${HOSTNAME_$i:-$PGHOST_$i}"
 	export PGHOST="$PGHOST_$i"
 	export PGPORT="${PGPORT_$i:-5432}"
 	export PGUSER="$PGUSER_$i"
@@ -33,7 +34,7 @@ for i in {0..10}; do
 	# time pg_dumpall --file="/pg_dump/!globals.sql" --globals-only
 
 	echo "Sending database dumps to S3"
-	time restic backup --host "$PGHOST" "/pg_dump"
+	time restic backup --host "$HOSTNAME" "/pg_dump"
 
 	rm -rf "/pg_dump"
 done

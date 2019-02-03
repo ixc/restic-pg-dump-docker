@@ -35,6 +35,13 @@ You can also pass the following environment variables to override the defaults:
     -e RESTIC_KEEP_WEEKLY='4'
     -e RESTIC_KEEP_MONTHLY='12'
 
+You can backup 5 different database clusters with `PG_[1..5]`, and assign an arbitrary hostname with `HOSTNAME_[1..5]` environment variables.
+
+    -e HOSTNAME_2='...'
+    -e PGHOST_2='...'
+    -e PGPASSWORD_2='...'
+    -e PGUSER_2='...'
+
 A `docker-compose.yml` file is provided for convenience.
 
 
@@ -64,11 +71,11 @@ List snapshots:
 
 Restore the latest snapshot for a given server:
 
-    $ restic restore --host "$PGHOST" --target "restore/$PGHOST" latest
+    $ restic restore --host {HOSTNAME} --target "restore/{HOSTNAME}" latest
 
 Restore files matching a pattern from latest snapshot for a given server:
 
-    $ restic restore --host "$PGHOST" --target "restore/$PGHOST" --include '*-production.sql' latest
+    $ restic restore --host "{HOSTNAME}" --target "restore/{HOSTNAME}" --include '*-production.sql' latest
 
 Mount the restic repository via fuse (read-only):
 
@@ -76,8 +83,8 @@ Mount the restic repository via fuse (read-only):
 
 Then, access the latest snapshot from another terminal:
 
-    $ ls -l "mnt/hosts/$PGHOST/latest"
-    $ psql -f "mnt/hosts/$PGHOST/latest/pg_dump/{DBNAME}.sql" {DBNAME}
+    $ ls -l "mnt/hosts/{HOSTNAME}/latest"
+    $ psql -f "mnt/hosts/{HOSTNAME}/latest/pg_dump/{DBNAME}.sql" {DBNAME}
 
 
 [direnv]: https://direnv.net/
