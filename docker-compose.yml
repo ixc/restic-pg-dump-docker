@@ -5,13 +5,13 @@ services:
     environment:
       AWS_ACCESS_KEY_ID:
       AWS_SECRET_ACCESS_KEY:
-      # CRONTAB_SCHEDULE: '0 */4 * * *'
+      # CRONTAB_SCHEDULE: '0 * * * *'
       PGHOST:
       PGPASSWORD:
       # PGPORT: 5432
       PGUSER:
       # RESTIC_KEEP_DAILY: 7
-      # RESTIC_KEEP_LAST: 5
+      # RESTIC_KEEP_LAST: 24
       # RESTIC_KEEP_WEEKLY: 4
       # RESTIC_KEEP_MONTHLY: 12
       RESTIC_PASSWORD:
