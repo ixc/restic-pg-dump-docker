@@ -2,7 +2,7 @@
 
 set -e
 
-for i in {0..10}; do
+for i in {1..5}; do
 	export HOSTNAME_VAR="HOSTNAME_$i"
 	export PGHOST_VAR="PGHOST_$i"
 	export PGPASSWORD_VAR="PGPASSWORD_$i"
