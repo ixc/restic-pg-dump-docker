@@ -5,6 +5,7 @@ set -e
 for i in {0..10}; do
 	export HOSTNAME="${HOSTNAME_$i:-$PGHOST_$i}"
 	export PGHOST="$PGHOST_$i"
+	export PGPASSWORD="$PGPASSWORD_$i"
 	export PGPORT="${PGPORT_$i:-5432}"
 	export PGUSER="$PGUSER_$i"
 

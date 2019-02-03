@@ -40,6 +40,7 @@ You can backup 5 different database clusters with `PG_[1..5]`, and assign an arb
     -e HOSTNAME_2='...'
     -e PGHOST_2='...'
     -e PGPASSWORD_2='...'
+    -e PGPORT_2='5432'
     -e PGUSER_2='...'
 
 A `docker-compose.yml` file is provided for convenience.
