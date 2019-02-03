@@ -10,8 +10,8 @@ for i in {0..10}; do
 	export PGUSER="$PGUSER_$i"
 
 	# No more databases.
-	for var in PGHOST_$i PGPORT_$i PGUSER_$i; do
-		eval [[ -z \${$var+1} ]] && {
+	for var in PGHOST PGUSER; do
+		[[ -z "${!var}" ]] && {
 			exit 0
 		}
 	done
