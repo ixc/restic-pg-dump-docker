@@ -16,17 +16,19 @@ for i in {0..10}; do
 		}
 	done
 
+	echo "Dumping databases: $PGUSER@$PGHOST:$PGPORT"
+
 	# Wait for PostgreSQL to become available.
 	COUNT=0
 	until psql -l > /dev/null 2>&1; do
 		if [[ "$COUNT" == 0 ]]; then
-			echo "Waiting for PostgreSQL ($PGUSER@$PGHOST:$PGPORT)..."
+			echo "Waiting for PostgreSQL to become available..."
 		fi
 		(( COUNT += 1 ))
 		sleep 1
 	done
 	if (( COUNT > 0 )); then
-		echo "Waited $COUNT seconds for PostgreSQL."
+		echo "Waited $COUNT seconds."
 	fi
 
 	mkdir -p "/pg_dump"
