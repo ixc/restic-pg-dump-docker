@@ -35,7 +35,7 @@ You can also pass the following environment variables to override the defaults:
     -e RESTIC_KEEP_WEEKLY='4'
     -e RESTIC_KEEP_MONTHLY='12'
 
-You can backup 5 different database clusters with `PG_[1..5]`, and assign an arbitrary hostname with `HOSTNAME_[1..5]` environment variables.
+You can backup 5 different database clusters with `PG*_[1..5]`, and assign an arbitrary hostname with `HOSTNAME_[1..5]` (if `PGHOST` is not a fully qualified domain name) environment variables.
 
     -e HOSTNAME_2='...'
     -e PGHOST_2='...'
