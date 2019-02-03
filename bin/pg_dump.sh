@@ -4,7 +4,7 @@ set -e
 
 for i in {0..10}; do
 	export PGHOST="$PGHOST_$i"
-	export PGPORT="$PGPORT_$i"
+	export PGPORT="${PGPORT_$i:-5432}"
 	export PGUSER="$PGUSER_$i"
 
 	# Wait for PostgreSQL to become available.
