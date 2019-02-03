@@ -16,7 +16,7 @@ for i in {0..10}; do
 		}
 	done
 
-	echo "Dumping databases: $PGUSER@$PGHOST:$PGPORT"
+	echo "Dumping database cluster $i: $PGUSER@$PGHOST:$PGPORT"
 
 	# Wait for PostgreSQL to become available.
 	COUNT=0
