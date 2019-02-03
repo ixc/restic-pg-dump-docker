@@ -3,11 +3,17 @@
 set -e
 
 for i in {0..10}; do
-	export HOSTNAME="${HOSTNAME_$i:-$PGHOST_$i}"
-	export PGHOST="$PGHOST_$i"
-	export PGPASSWORD="$PGPASSWORD_$i"
-	export PGPORT="${PGPORT_$i:-5432}"
-	export PGUSER="$PGUSER_$i"
+	export HOSTNAME_VAR="HOSTNAME_$i"
+	export PGHOST_VAR="PGHOST_$i"
+	export PGPASSWORD_VAR="PGPASSWORD_$i"
+	export PGPORT_VAR="PGPORT_$i"
+	export PGUSER_VAR="PGUSER_$i"
+
+	export HOSTNAME="${!HOSTNAME_VAR:-$PGHOST_$i}"
+	export PGHOST="${!PGHOST_VAR}"
+	export PGPASSWORD="${!PGPASSWORD_VAR}"
+	export PGPORT="${!PGPORT_VAR:-5432}"
+	export PGUSER="${!PGUSER_VAR}"
 
 	# No more databases.
 	for var in PGHOST PGUSER; do
