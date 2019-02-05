@@ -30,8 +30,8 @@ You can also pass the following environment variables to override the defaults:
 
     -e CRONTAB_SCHEDULE='0 * * * *'
     -e PGPORT='5432'
+    -e RESTIC_KEEP_HOURLY='24'
     -e RESTIC_KEEP_DAILY='7'
-    -e RESTIC_KEEP_LAST='24'
     -e RESTIC_KEEP_WEEKLY='4'
     -e RESTIC_KEEP_MONTHLY='12'
 
