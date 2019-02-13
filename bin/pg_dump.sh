@@ -50,7 +50,10 @@ for i in {1..5}; do
 	# time pg_dumpall --file="/pg_dump/!globals.sql" --globals-only
 
 	echo "Sending database dumps to S3"
-	time restic backup --host "$HOSTNAME" "/pg_dump"
+	while ! time restic backup --host "$HOSTNAME" "/pg_dump"; do
+		echo "Sleeping for 60 seconds before retry..."
+		sleep 60
+	done
 
 	rm -rf "/pg_dump"
 done
