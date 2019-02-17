@@ -28,4 +28,4 @@ done
 
 time restic check
 
-echo 'Finished.'
+echo 'Finished backup successfully'
