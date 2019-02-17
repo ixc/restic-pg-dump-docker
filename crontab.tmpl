@@ -1,1 +1,1 @@
-{{ default .Env.CRONTAB_SCHEDULE "0 * * * *" }}  run.sh
+{{ default .Env.CRONTAB_SCHEDULE "0 * * * *" }}  flock -n /opt/restic-pg-dump/lockfile run.sh

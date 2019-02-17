@@ -6,6 +6,8 @@ RUN apk update \
         bash \
         postgresql-client \
         tini \
+    && apk add --repository=http://dl-cdn.alpinelinux.org/alpine/edge/main \
+        util-linux \
     && rm -rf /var/cache/apk/*
 
 ENV DOCKERIZE_VERSION=0.5.0
