@@ -9,7 +9,7 @@ By default:
 - Keeps 24 latest, 7 daily, 4 weekly, and 12 monthly snapshots.
 - Prunes old snapshots every week.
 
-Pruning old snapshots requires an exclusive lock. You should ensure that this happens infrequently, and is only executed on a single host.
+**NOTE:** Pruning requires an exclusive lock, and should be done infrequently from a single host.
 
 
 # Usage
