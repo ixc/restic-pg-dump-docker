@@ -9,7 +9,7 @@ for var in AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY RESTIC_PASSWORD RESTIC_REPOSI
 	}
 done
 
-if ! restic snapshots; then
+if ! restic snapshots --no-lock; then
 	restic init
 fi
 
@@ -26,6 +26,6 @@ while ! restic forget \
 	sleep 1
 done
 
-restic check
+restic check --no-lock
 
 echo 'Finished backup successfully'
