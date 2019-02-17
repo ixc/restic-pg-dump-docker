@@ -1,5 +1,5 @@
 {{ default .Env.BACKUP_SCHEDULE "0 * * * *" }}  flock -n /opt/restic-pg-dump/backup.lockfile backup.sh
 
 {{ if default .Env.PRUNE_SCHEDULE "0 14 * * 0" }}
-{{ .Env.PRUNE_SCHEDULE }}  flock -n /opt/restic-pg-dump/prune.lockfile prune.sh
+{{ default .Env.PRUNE_SCHEDULE "0 14 * * 0" }}  flock -n /opt/restic-pg-dump/prune.lockfile prune.sh
 {{ end }}
