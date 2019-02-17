@@ -9,6 +9,6 @@ for var in AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY RESTIC_PASSWORD RESTIC_REPOSI
 	}
 done
 
-if ! restic snapshots --no-lock; then
+if ! restic unlock; then
 	restic init
 fi
