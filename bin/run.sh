@@ -22,8 +22,8 @@ while ! time restic forget \
 		--keep-daily="${RESTIC_KEEP_DAILY:-7}" \
 		--keep-weekly="${RESTIC_KEEP_WEEKLY:-4}" \
 		--keep-monthly="${RESTIC_KEEP_MONTHLY:-12}"; do
-	echo "Sleeping for 60 seconds before retry..."
-	sleep 60
+	echo "Sleeping for 1 second before retry..."
+	sleep 1
 done
 
 time restic check

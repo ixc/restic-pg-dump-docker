@@ -51,8 +51,8 @@ for i in {1..5}; do
 
 	echo "Sending database dumps to S3"
 	while ! time restic backup --host "$HOSTNAME" "/pg_dump"; do
-		echo "Sleeping for 60 seconds before retry..."
-		sleep 60
+		echo "Sleeping for 1 second before retry..."
+		sleep 1
 	done
 
 	rm -rf "/pg_dump"
