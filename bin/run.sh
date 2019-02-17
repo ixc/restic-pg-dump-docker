@@ -10,13 +10,13 @@ for var in AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY RESTIC_PASSWORD RESTIC_REPOSI
 done
 
 if ! restic snapshots; then
-	time restic init
+	restic init
 fi
 
-time pg_dump.sh
+pg_dump.sh
 
 echo "Pruning old snapshots"
-while ! time restic forget \
+while ! restic forget \
 		--prune \
 		--keep-hourly="${RESTIC_KEEP_HOURLY:-24}" \
 		--keep-daily="${RESTIC_KEEP_DAILY:-7}" \
@@ -26,6 +26,6 @@ while ! time restic forget \
 	sleep 1
 done
 
-time restic check
+restic check
 
 echo 'Finished backup successfully'
