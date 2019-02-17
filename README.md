@@ -7,6 +7,9 @@ By default:
 - Uses S3 as restic repository backend.
 - Runs every hour via cron job.
 - Keeps 24 latest, 7 daily, 4 weekly, and 12 monthly snapshots.
+- Prunes old snapshots every week.
+
+Pruning old snapshots requires an exclusive lock. You should ensure that this happens infrequently, and is only executed on a single host.
 
 
 # Usage
@@ -28,7 +31,8 @@ Run:
 
 You can also pass the following environment variables to override the defaults:
 
-    -e CRONTAB_SCHEDULE='0 * * * *'
+    -e RESTIC_BACKUP_SCHEDULE='0 * * * *'  # Hourly
+    -e RESTIC_PRUNE_SCHEDULE='0 14 * * 0'  # Sunday midnight, AEST. Use '' to disable.
     -e PGPORT='5432'
     -e RESTIC_KEEP_HOURLY='24'
     -e RESTIC_KEEP_DAILY='7'
@@ -86,6 +90,8 @@ Then, access the latest snapshot from another terminal:
 
     $ ls -l "mnt/hosts/{HOSTNAME}/latest"
     $ psql -f "mnt/hosts/{HOSTNAME}/latest/pg_dump/{DBNAME}.sql" {DBNAME}
+
+**WARNING:** Mounting the restic repository via fuse will open an exclusive lock and prevent all scheduled backups until the lock is released.
 
 
 [direnv]: https://direnv.net/

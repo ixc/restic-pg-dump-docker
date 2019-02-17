@@ -2,18 +2,7 @@
 
 set -e
 
-for var in AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY RESTIC_PASSWORD RESTIC_REPOSITORY; do
-	eval [[ -z \${$var+1} ]] && {
-		>&2 echo "ERROR: Missing required environment variable: $var"
-		exit 1
-	}
-done
-
-if ! restic snapshots --no-lock; then
-	restic init
-fi
-
-pg_dump.sh
+setup.sh
 
 echo "Pruning old snapshots"
 while ! restic forget \
@@ -28,4 +17,4 @@ done
 
 restic check --no-lock
 
-echo 'Finished backup successfully'
+echo 'Finished prune successfully'

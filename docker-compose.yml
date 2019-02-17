@@ -5,7 +5,8 @@ services:
     environment:
       AWS_ACCESS_KEY_ID:
       AWS_SECRET_ACCESS_KEY:
-      # CRONTAB_SCHEDULE: '0 * * * *'
+      # BACKUP_SCHEDULE: '0 * * * *'  # Hourly
+      # PRUNE_SCHEDULE: '0 14 * * 0'  # Sunday midnight, AEST. Use '' to disable.
       PGHOST:
       PGPASSWORD:
       # PGPORT: 5432
