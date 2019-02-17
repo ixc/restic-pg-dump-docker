@@ -27,8 +27,8 @@ for i in {1..5}; do
 					--keep-daily="${RESTIC_KEEP_DAILY:-7}" \
 					--keep-weekly="${RESTIC_KEEP_WEEKLY:-4}" \
 					--keep-monthly="${RESTIC_KEEP_MONTHLY:-12}"; do
-				echo "Sleeping for 1 second before retry..."
-				sleep 1
+				echo "Sleeping for 10 seconds before retry..."
+				sleep 10
 			done
 
 			restic check --no-lock
@@ -68,8 +68,8 @@ for i in {1..5}; do
 
 	echo "Sending database dumps to S3"
 	while ! restic backup --host "$HOSTNAME" "/pg_dump"; do
-		echo "Sleeping for 1 second before retry..."
-		sleep 1
+		echo "Sleeping for 10 seconds before retry..."
+		sleep 10
 	done
 
 	echo 'Finished sending database dumps to S3'
