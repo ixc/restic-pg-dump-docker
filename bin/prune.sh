@@ -4,6 +4,8 @@ set -e
 
 setup.sh
 
+rm -rf /tmp/restic-check-cache-*
+
 echo "Pruning old snapshots"
 while ! restic prune; do
 	echo "Sleeping for 10 seconds before retry..."
