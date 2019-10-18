@@ -20,21 +20,7 @@ for i in {1..5}; do
 	# No more databases.
 	for var in PGHOST PGUSER; do
 		[[ -z "${!var}" ]] && {
-			echo "Forgetting old snapshots"
-			while ! restic forget \
-					--compact \
-					--keep-hourly="${RESTIC_KEEP_HOURLY:-24}" \
-					--keep-daily="${RESTIC_KEEP_DAILY:-7}" \
-					--keep-weekly="${RESTIC_KEEP_WEEKLY:-4}" \
-					--keep-monthly="${RESTIC_KEEP_MONTHLY:-12}"; do
-				echo "Sleeping for 10 seconds before retry..."
-				sleep 10
-			done
-
-			restic check --no-lock
-
 			echo 'Finished backup successfully'
-
 			exit 0
 		}
 	done
