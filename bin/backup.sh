@@ -47,7 +47,7 @@ for i in {1..5}; do
 		}
 	fi
 
-	mkdir -p "/pg_dump"
+	mkdir "/pg_dump" || exit 1
 
 	# Dump individual databases directly to restic repository.
 	dblist=$(psql -d postgres -q -t -c "SELECT datname FROM pg_database WHERE datname NOT IN ('postgres', 'rdsadmin', 'template0', 'template1')")
