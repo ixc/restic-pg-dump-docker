@@ -4,6 +4,8 @@ set -e
 
 setup.sh
 
+max_pg_wait_count=120
+
 for i in {1..5}; do
 	export HOSTNAME_VAR="HOSTNAME_$i"
 	export PGHOST_VAR="PGHOST_$i"
@@ -28,23 +30,28 @@ for i in {1..5}; do
 	echo "Dumping database cluster $i: $PGUSER@$PGHOST:$PGPORT"
 
 	# Wait for PostgreSQL to become available.
-	COUNT=0
+	count=0
 	until psql -l > /dev/null 2>&1; do
-		if [[ "$COUNT" == 0 ]]; then
+		if [[ "$count" == 0 ]]; then
 			echo "Waiting for PostgreSQL to become available..."
 		fi
-		(( COUNT += 1 ))
+		(( count += 1 ))
+		[ $count -lt $max_pg_wait_count ] || break
 		sleep 1
 	done
-	if (( COUNT > 0 )); then
-		echo "Waited $COUNT seconds."
+	if (( count > 0 )); then
+		echo "Waited $count seconds."
+		psql -l > /dev/null 2>&1 || {
+			echo "PostgreSQL still not available, trying next backup."
+			continue
+		}
 	fi
 
 	mkdir -p "/pg_dump"
 
 	# Dump individual databases directly to restic repository.
-	DBLIST=$(psql -d postgres -q -t -c "SELECT datname FROM pg_database WHERE datname NOT IN ('postgres', 'rdsadmin', 'template0', 'template1')")
-	for dbname in $DBLIST; do
+	dblist=$(psql -d postgres -q -t -c "SELECT datname FROM pg_database WHERE datname NOT IN ('postgres', 'rdsadmin', 'template0', 'template1')")
+	for dbname in $dblist; do
 		echo "Dumping database '$dbname'"
 		pg_dump --file="/pg_dump/$dbname.sql" --no-owner --no-privileges --dbname="$dbname" || true  # Ignore failures
 	done
