@@ -4,7 +4,7 @@ set -e
 
 setup.sh
 
-max_pg_wait_count=120
+max_pg_wait_count=${PGDUMP_BACKUP_WAIT_TIME:-120}
 work_area=${PGDUMP_BACKUP_AREA:-/pg_dump}
 
 for i in {1..5}; do
