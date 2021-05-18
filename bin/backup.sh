@@ -36,9 +36,12 @@ for i in {1..5}; do
 		if [[ "$count" == 0 ]]; then
 			echo "Waiting for PostgreSQL to become available..."
 		fi
-		(( count += 1 ))
-		[ $count -lt $max_pg_wait_count ] || break
+		if [[ $count -ge $max_pg_wait_count ]]
+		then
+			break
+		fi
 		sleep 1
+		(( count += 1 ))
 	done
 	if (( count > 0 )); then
 		echo "Waited $count seconds."
