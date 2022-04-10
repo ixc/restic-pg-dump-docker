@@ -7,6 +7,8 @@ setup.sh
 max_pg_wait_count=${PGDUMP_BACKUP_WAIT_TIME:-120}
 work_area=${PGDUMP_BACKUP_AREA:-/pg_dump}
 
+pg_backup_jobs=${PGDUMP_BACKUP_JOBS:-1}
+
 for i in {1..5}; do
 	export HOSTNAME_VAR="HOSTNAME_$i"
 	export PGHOST_VAR="PGHOST_$i"
@@ -57,7 +59,8 @@ for i in {1..5}; do
 	dblist=$(psql -d postgres -q -t -c "SELECT datname FROM pg_database WHERE datname NOT IN ('postgres', 'rdsadmin', 'template0', 'template1')")
 	for dbname in $dblist; do
 		echo "Dumping database '$dbname'"
-		pg_dump --file="$work_area/$dbname.sql" --no-owner --no-privileges --dbname="$dbname" || true  # Ignore failures
+		# pg_dump working at default compression (6) 
+		pg_dump --file="$work_area/$dbname" --format="directory" --no-owner --no-privileges --dbname="$dbname" --jobs=$pg_backup_jobs || true  # Ignore failures
 	done
 
 	# echo "Dumping global objects for '$PGHOST'"
