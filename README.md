@@ -97,3 +97,13 @@ Then, access the latest snapshot from another terminal:
 [direnv]: https://direnv.net/
 [Homebrew]: https://brew.sh/
 [restic]: https://restic.net/
+
+# PG Restore
+
+If DB needs to be to dropped and setup again from backup file.
+   
+	pg_restore --clean --if-exists --create -d postgres --format="directory" --jobs={MAX_POSSIBLE_NUM} {PG_DUMP_FOLDER}
+
+If DB is already setup with privs and access -
+
+    pg_restore -d {DB_NAME} --format="directory" --jobs={MAX_POSSIBLE_NUM} {PG_DUMP_FOLDER}

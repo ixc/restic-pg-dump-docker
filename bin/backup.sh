@@ -4,6 +4,11 @@ set -e
 
 setup.sh
 
+max_pg_wait_count=${PGDUMP_BACKUP_WAIT_TIME:-120}
+work_area=${PGDUMP_BACKUP_AREA:-/pg_dump}
+
+pg_backup_jobs=${PGDUMP_BACKUP_JOBS:-1}
+
 for i in {1..5}; do
 	export HOSTNAME_VAR="HOSTNAME_$i"
 	export PGHOST_VAR="PGHOST_$i"
@@ -28,37 +33,46 @@ for i in {1..5}; do
 	echo "Dumping database cluster $i: $PGUSER@$PGHOST:$PGPORT"
 
 	# Wait for PostgreSQL to become available.
-	COUNT=0
+	count=0
 	until psql -l > /dev/null 2>&1; do
-		if [[ "$COUNT" == 0 ]]; then
+		if [[ "$count" == 0 ]]; then
 			echo "Waiting for PostgreSQL to become available..."
 		fi
-		(( COUNT += 1 ))
+		if [[ $count -ge $max_pg_wait_count ]]
+		then
+			break
+		fi
 		sleep 1
+		(( count += 1 ))
 	done
-	if (( COUNT > 0 )); then
-		echo "Waited $COUNT seconds."
+	if (( count > 0 )); then
+		echo "Waited $count seconds."
+		psql -l > /dev/null 2>&1 || {
+			echo "PostgreSQL still not available, trying next backup."
+			continue
+		}
 	fi
 
-	mkdir -p "/pg_dump"
+	mkdir "$work_area" || exit 1
 
 	# Dump individual databases directly to restic repository.
-	DBLIST=$(psql -d postgres -q -t -c "SELECT datname FROM pg_database WHERE datname NOT IN ('postgres', 'rdsadmin', 'template0', 'template1')")
-	for dbname in $DBLIST; do
+	dblist=$(psql -d postgres -q -t -c "SELECT datname FROM pg_database WHERE datname NOT IN ('postgres', 'rdsadmin', 'template0', 'template1')")
+	for dbname in $dblist; do
 		echo "Dumping database '$dbname'"
-		pg_dump --file="/pg_dump/$dbname.sql" --no-owner --no-privileges --dbname="$dbname" || true  # Ignore failures
+		# pg_dump working at default compression (6) 
+		pg_dump --file="$work_area/$dbname" --format="directory" --no-owner --no-privileges --dbname="$dbname" --jobs=$pg_backup_jobs || true  # Ignore failures
 	done
 
 	# echo "Dumping global objects for '$PGHOST'"
-	# pg_dumpall --file="/pg_dump/!globals.sql" --globals-only
+	# pg_dumpall --file="$work_area/!globals.sql" --globals-only
 
 	echo "Sending database dumps to S3"
-	while ! restic backup --host "$HOSTNAME" "/pg_dump"; do
+	while ! restic backup --host "$HOSTNAME" "$work_area"; do
 		echo "Sleeping for 10 seconds before retry..."
 		sleep 10
 	done
 
 	echo 'Finished sending database dumps to S3'
 
-	rm -rf "/pg_dump"
+	rm -rf "$work_area"
 done
