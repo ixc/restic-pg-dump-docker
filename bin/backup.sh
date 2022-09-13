@@ -11,7 +11,7 @@ for i in {1..5}; do
 	export PGPORT_VAR="PGPORT_$i"
 	export PGUSER_VAR="PGUSER_$i"
 
-	export HOSTNAME="${!HOSTNAME_VAR:-$PGHOST_$i}"
+	export HOSTNAME="${!HOSTNAME_VAR:-${!PGHOST_VAR}}"
 	export PGHOST="${!PGHOST_VAR}"
 	export PGPASSWORD="${!PGPASSWORD_VAR}"
 	export PGPORT="${!PGPORT_VAR:-5432}"
