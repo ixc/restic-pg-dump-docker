@@ -15,7 +15,7 @@ for i in {1..5}; do
 	export PGHOST="${!PGHOST_VAR}"
 	export PGPASSWORD="${!PGPASSWORD_VAR}"
 	export PGPORT="${!PGPORT_VAR:-5432}"
-	export PGUSER="${!PGUSER_VAR}"
+	export PGUSER="${!PGUSER_VAR:-postgres}"
 
 	# No more databases.
 	for var in PGHOST PGUSER; do
