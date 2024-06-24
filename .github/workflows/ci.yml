@@ -9,7 +9,7 @@ jobs:
   image:
     env:
       IMAGE_REPO: ${{ secrets.DOCKER_ORG }}/${{ secrets.DOCKER_REPO }}
-      IMAGE_TAG: sha-${{ github.sha }}
+      IMAGE_TAG: sha-${{ github.sha }}-${{ matrix.arch }}
     runs-on:
       - linux
       - self-hosted
@@ -24,16 +24,30 @@ jobs:
           file: Dockerfile
           no-cache: ${{ github.event_name == 'schedule' }}
           push: true
-          tags: ${{ env.IMAGE_REPO }}:sha-${{ env.IMAGE_TAG }}
+          tags: ${{ env.IMAGE_REPO }}:${{ env.IMAGE_TAG }}
       - name: Push branch tag
         run: |
-          docker tag ${{ env.IMAGE_REPO }}:sha-${{ env.IMAGE_TAG }} ${{ env.IMAGE_REPO }}:${GITHUB_REF#refs/heads/}
+          docker tag ${{ env.IMAGE_REPO }}:${{ env.IMAGE_TAG }} ${{ env.IMAGE_REPO }}:${GITHUB_REF#refs/heads/}
+          docker push ${{ env.IMAGE_REPO }}:${{ env.IMAGE_TAG }}
           docker push ${{ env.IMAGE_REPO }}:${GITHUB_REF#refs/heads/}
       - name: Push 'latest' tag
         if: github.ref == 'refs/heads/master'
         run: |
-          docker tag ${{ env.IMAGE_REPO }}:sha-${{ env.IMAGE_TAG }} ${{ env.IMAGE_REPO }}:latest
+          docker tag ${{ env.IMAGE_REPO }}:${{ env.IMAGE_TAG }} ${{ env.IMAGE_REPO }}:latest
+          docker push ${{ env.IMAGE_REPO }}:${{ env.IMAGE_TAG }}
           docker push ${{ env.IMAGE_REPO }}:latest
+
+      - name: Cleanup
+        if: always()
+        run: |
+          export COMPOSE_PROJECT_NAME=${COMPOSE_PROJECT_NAME//\//-}
+          docker-compose down --volumes
+          docker rmi -f \
+            ${{ env.IMAGE_REPO }}:${{ env.IMAGE_TAG }} \
+            ${{ env.IMAGE_REPO }}:${GITHUB_REF#refs/heads/}
+          if [[ "$BRANCH" == master ]]; then
+            docker rmi -f ${{ env.IMAGE_REPO }}:latest
+          fi
 
     strategy:
       matrix:

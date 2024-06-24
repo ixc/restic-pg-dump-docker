@@ -12,13 +12,12 @@ RUN apk update \
 
 ENV DOCKERIZE_VERSION=0.5.0
 
-RUN apkArch="$(apk --print-arch)"; \
-case "$apkArch" in \
-    armhf) export DOCKERIZE_ARCH='armhf' ;; \
-    x86) export DOCKERIZE_ARCH='amd64' ;; \
-esac;
-
-RUN wget -nv -O - "https://github.com/jwilder/dockerize/releases/download/v${DOCKERIZE_VERSION}/dockerize-linux-${DOCKERIZE_ARCH}-v${DOCKERIZE_VERSION}.tar.gz" | tar -xz -C /usr/local/bin/ -f -
+ARG TARGETPLATFORM
+RUN if [ "$TARGETPLATFORM" = "linux/amd64" ]; then DOCKERIZE_ARCH=amd64; elif [ "$TARGETPLATFORM" = "linux/arm/v7" ]; then DOCKERIZE_ARCH=armhf; else DOCKERIZE_ARCH=amd64; fi \
+    && echo "TARGETPLATFORM=${TARGETPLATFORM}" \
+    && echo "DOCKERIZE_ARCH=${DOCKERIZE_ARCH}" \
+    && echo "DOCKERIZE_VERSION=${DOCKERIZE_VERSION}" \
+    && wget -nv -O - "https://github.com/jwilder/dockerize/releases/download/v${DOCKERIZE_VERSION}/dockerize-linux-${DOCKERIZE_ARCH}-v${DOCKERIZE_VERSION}.tar.gz" | tar -xz -C /usr/local/bin/ -f -
 
 ENV PATH="$PATH:/opt/restic-pg-dump/bin"
 
