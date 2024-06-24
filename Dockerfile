@@ -11,7 +11,14 @@ RUN apk update \
     && rm -rf /var/cache/apk/*
 
 ENV DOCKERIZE_VERSION=0.5.0
-RUN wget -nv -O - "https://github.com/jwilder/dockerize/releases/download/v${DOCKERIZE_VERSION}/dockerize-linux-amd64-v${DOCKERIZE_VERSION}.tar.gz" | tar -xz -C /usr/local/bin/ -f -
+
+RUN apkArch="$(apk --print-arch)"; \
+case "$apkArch" in \
+    armhf) export DOCKERIZE_ARCH='armhf' ;; \
+    x86) export DOCKERIZE_ARCH='amd64' ;; \
+esac;
+
+RUN wget -nv -O - "https://github.com/jwilder/dockerize/releases/download/v${DOCKERIZE_VERSION}/dockerize-linux-${DOCKERIZE_ARCH}-v${DOCKERIZE_VERSION}.tar.gz" | tar -xz -C /usr/local/bin/ -f -
 
 ENV PATH="$PATH:/opt/restic-pg-dump/bin"
 
