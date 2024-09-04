@@ -8,12 +8,14 @@ on:
 jobs:
   image:
     env:
-      IMAGE_REPO: ${{ secrets.DOCKER_ORG }}/${{ secrets.DOCKER_REPO }}
+      IMAGE_REPO: ${{ vars.DOCKER_ORG }}/${{ vars.DOCKER_REPO }}
       IMAGE_TAG: sha-${{ github.sha }}
     runs-on:
       - linux
       - self-hosted
       - x64
+      #   Use this if running locally w/ act
+      # - ubuntu-latest
     steps:
       - uses: docker/login-action@v1
         with:
@@ -39,10 +41,12 @@ jobs:
     needs: image
     runs-on:
       - self-hosted
+      #   Use this if running locally w/ act
+      # - ubuntu-latest
     steps:
       - uses: actions/checkout@v2
       - uses: peter-evans/dockerhub-description@v2
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
-          repository: ${{ secrets.DOCKER_ORG }}/${{ secrets.DOCKER_REPO }}
+          repository: ${{ vars.DOCKER_ORG }}/${{ vars.DOCKER_REPO }}
