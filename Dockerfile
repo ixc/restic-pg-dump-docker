@@ -10,7 +10,7 @@ RUN apk update \
         util-linux \
     && rm -rf /var/cache/apk/*
 
-ENV DOCKERIZE_VERSION=0.5.0
+ENV DOCKERIZE_VERSION=0.8.0
 RUN wget -nv -O - "https://github.com/jwilder/dockerize/releases/download/v${DOCKERIZE_VERSION}/dockerize-linux-amd64-v${DOCKERIZE_VERSION}.tar.gz" | tar -xz -C /usr/local/bin/ -f -
 
 ENV PATH="$PATH:/opt/restic-pg-dump/bin"
