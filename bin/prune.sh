@@ -10,7 +10,8 @@ while ! restic forget \
 		--keep-hourly="${RESTIC_KEEP_HOURLY:-24}" \
 		--keep-daily="${RESTIC_KEEP_DAILY:-7}" \
 		--keep-weekly="${RESTIC_KEEP_WEEKLY:-4}" \
-		--keep-monthly="${RESTIC_KEEP_MONTHLY:-12}"; do
+		--keep-monthly="${RESTIC_KEEP_MONTHLY:-12}" \
+		--keep-yearly="${RESTIC_KEEP_YEARLY:-7}"; do
 	echo "Sleeping for 10 seconds before retry..."
 	sleep 10
 done
