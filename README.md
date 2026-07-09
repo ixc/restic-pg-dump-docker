@@ -39,6 +39,7 @@ You can also pass the following environment variables to override the defaults:
     -e RESTIC_KEEP_WEEKLY='4'
     -e RESTIC_KEEP_MONTHLY='12'
     -e RESTIC_KEEP_YEARLY='7'
+    -e EXCLUDED_DATABASES='db_to_skip,another_db'  # Global exclusions for all clusters
 
 You can backup 5 different database clusters with `PG*_[1..5]`, and assign an arbitrary hostname with `HOSTNAME_[1..5]` (if `PGHOST` is not a fully qualified domain name) environment variables.
 
@@ -47,6 +48,9 @@ You can backup 5 different database clusters with `PG*_[1..5]`, and assign an ar
     -e PGPASSWORD_2='...'
     -e PGPORT_2='5432'
     -e PGUSER_2='...'
+    -e EXCLUDED_DATABASES_2='db_to_skip_for_cluster_2'  # Overrides EXCLUDED_DATABASES for cluster 2
+
+If both `EXCLUDED_DATABASES` and `EXCLUDED_DATABASES_N` are set for cluster `N`, `EXCLUDED_DATABASES_N` takes precedence for that cluster.
 
 A `docker-compose.yml` file is provided for convenience.
 
