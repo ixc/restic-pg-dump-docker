@@ -2,6 +2,26 @@
 
 set -e
 
+PG_DUMP_DIR="${PG_DUMP_DIR:-/pg_dump}"
+
+trim_whitespace() {
+	local value="$1"
+	value="${value#"${value%%[![:space:]]*}"}"
+	value="${value%"${value##*[![:space:]]}"}"
+	printf '%s' "$value"
+}
+
+sql_quote_literal() {
+	local value="$1"
+	value="${value//\'/\'\'}"
+	printf "'%s'" "$value"
+}
+
+cleanup_dump_files() {
+	[[ -d "$PG_DUMP_DIR" ]] || return 0
+	find "$PG_DUMP_DIR" -maxdepth 1 -type f -name '*.sql' -delete
+}
+
 setup.sh
 
 for i in {1..5}; do
@@ -40,25 +60,57 @@ for i in {1..5}; do
 		echo "Waited $COUNT seconds."
 	fi
 
-	mkdir -p "/pg_dump"
+	mkdir -p "$PG_DUMP_DIR"
 
 	# Dump individual databases directly to restic repository.
-	DBLIST=$(psql -d postgres -q -t -c "SELECT datname FROM pg_database WHERE datname NOT IN ('postgres', 'rdsadmin', 'template0', 'template1')")
-	for dbname in $DBLIST; do
-		echo "Dumping database '$dbname'"
-		pg_dump --file="/pg_dump/$dbname.sql" --no-owner --no-privileges --dbname="$dbname" || true  # Ignore failures
+	export EXCLUDED_DATABASES_VAR="EXCLUDED_DATABASES_$i"
+	cluster_excluded_raw="$(trim_whitespace "${!EXCLUDED_DATABASES_VAR:-}")"
+	if [[ -n "$cluster_excluded_raw" ]]; then
+		effective_excluded_raw="$cluster_excluded_raw"
+	else
+		effective_excluded_raw="${EXCLUDED_DATABASES:-}"
+	fi
+
+	exclusions=(postgres rdsadmin template0 template1)
+	IFS=',' read -r -a extra_exclusions <<< "$effective_excluded_raw"
+	for raw_name in "${extra_exclusions[@]}"; do
+		trimmed_name="$(trim_whitespace "$raw_name")"
+		[[ -z "$trimmed_name" ]] && continue
+		exclusions+=("$trimmed_name")
 	done
+	declare -A excluded_lookup=()
+	for name in "${exclusions[@]}"; do
+		excluded_lookup["$name"]=1
+	done
+
+	sql_not_in_list=""
+	for name in "${exclusions[@]}"; do
+		quoted_name="$(sql_quote_literal "$name")"
+		if [[ -n "$sql_not_in_list" ]]; then
+			sql_not_in_list+=", "
+		fi
+		sql_not_in_list+="$quoted_name"
+	done
+
+	query="SELECT datname FROM pg_database WHERE datname NOT IN ($sql_not_in_list)"
+	DBLIST=$(psql -d postgres -A -q -t -c "$query")
+	while IFS= read -r dbname; do
+		[[ -z "$dbname" ]] && continue
+		[[ -n "${excluded_lookup[$dbname]:-}" ]] && continue
+		echo "Dumping database '$dbname'"
+		pg_dump --file="$PG_DUMP_DIR/$dbname.sql" --no-owner --no-privileges --dbname="$dbname" || true  # Ignore failures
+	done <<< "$DBLIST"
 
 	# echo "Dumping global objects for '$PGHOST'"
 	# pg_dumpall --file="/pg_dump/!globals.sql" --globals-only
 
 	echo "Sending database dumps to S3"
-	while ! restic backup --host "$HOST" "/pg_dump"; do
+	while ! restic backup --host "$HOST" "$PG_DUMP_DIR"; do
 		echo "Sleeping for 10 seconds before retry..."
 		sleep 10
 	done
 
 	echo 'Finished sending database dumps to S3'
 
-	rm -rf "/pg_dump"
+	cleanup_dump_files
 done
